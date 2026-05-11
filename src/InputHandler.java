@@ -23,11 +23,20 @@ public class InputHandler extends MouseAdapter {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (board.inputLocked || board.isGameOver)
+        // NẾU GAME ĐÃ KẾT THÚC -> Click chuột vào đâu cũng sẽ Reset game chơi lại
+        if (board.isGameOver) {
+            board.resetGame();
+            panel.repaint();
+            return;
+        }
+
+        // NẾU GAME ĐANG KHÓA CHUỘT (do đang rớt kẹo/trượt kẹo) -> Không cho click
+        if (board.inputLocked)
             return;
 
         // Tính bù trừ khoảng cách Offset màn hình
         int col = (e.getX() - panel.getOffsetX()) / board.TILE_SIZE;
+        // ... (GIỮ NGUYÊN TOÀN BỘ PHẦN CODE BÊN DƯỚI KHÔNG ĐỔI)
         int row = (e.getY() - panel.getOffsetY()) / board.TILE_SIZE;
 
         if (col < 0 || col >= board.COLS || row < 0 || row >= board.ROWS)
@@ -61,6 +70,47 @@ public class InputHandler extends MouseAdapter {
                 boolean wrappedWrapped = isW1 && isW2;
                 boolean stripedWrapped = (isS1 && isW2) || (isW1 && isS2);
 
+                if (anyChoco || stripedStriped || wrappedWrapped || stripedWrapped) {
+                    board.swapCandies(sr1, sc1, sr2, sc2);
+                    board.movesLeft--; // TRỪ LƯỢT ĐI KHI COMBO
+                    board.updateUI();
+
+                    panel.playSwapAnimation(sr1, sc1, sr2, sc2, () -> {
+                        if (anyChoco)
+                            board.activateChocoCombo(sr1, sc1, sr2, sc2);
+                        else if (stripedStriped)
+                            board.activateStripedStriped(sr2, sc2);
+                        else if (wrappedWrapped)
+                            board.activateWrappedWrapped(sr2, sc2);
+                        else if (stripedWrapped)
+                            board.activateStripedWrapped(sr2, sc2);
+
+                        board.needsGravity = true;
+                        panel.startCascade();
+                    });
+                } else {
+                    board.swapCandies(sr1, sc1, sr2, sc2);
+                    panel.playSwapAnimation(sr1, sc1, sr2, sc2, () -> {
+                        if (board.checkMatches()) {
+                            board.movesLeft--; // TRỪ LƯỢT ĐI KHI ĂN ĐƯỢC KẸO
+                            board.updateUI();
+                            board.needsGravity = true;
+                            panel.startCascade();
+                        } else {
+                            board.swapCandies(sr1, sc1, sr2, sc2);
+                            panel.playSwapAnimation(sr1, sc1, sr2, sc2, () -> {
+                                board.inputLocked = false;
+                            });
+                        }
+                    });
+                }
+            }
+            selectedRow = -1;
+            selectedCol = -1;
+            panel.repaint();
+        }
+    }
+}
                 if (anyChoco || stripedStriped || wrappedWrapped || stripedWrapped) {
                     board.swapCandies(sr1, sc1, sr2, sc2);
                     board.movesLeft--; // TRỪ LƯỢT ĐI KHI COMBO
