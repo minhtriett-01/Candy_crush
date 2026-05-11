@@ -57,6 +57,13 @@ public class GamePanel extends JPanel {
                     }
                     if (board.movesLeft <= 0) {
                         board.isGameOver = true;
+
+                        // THÊM LOGIC CHECK THẮNG/THUA Ở ĐÂY
+                        if (board.score >= 1000)
+                            board.isVictory = true;
+                        if (board.score > Board.bestScore)
+                            Board.bestScore = board.score;
+
                         repaint();
                     }
                     board.inputLocked = false;
@@ -163,16 +170,40 @@ public class GamePanel extends JPanel {
         }
 
         // VẼ MÀN HÌNH GAME OVER
+        // ==========================================
+        // VẼ MÀN HÌNH END GAME (THẮNG/THUA & PLAY AGAIN)
+        // ==========================================
         if (board.isGameOver) {
-            g2d.setColor(new Color(0, 0, 0, 180));
+            // Phủ lớp kính đen mờ 200 alpha
+            g2d.setColor(new Color(0, 0, 0, 210));
             g2d.fillRect(0, 0, getWidth(), getHeight());
 
-            g2d.setColor(new Color(255, 100, 150));
-            g2d.setFont(new Font("Arial", Font.BOLD, 80));
-            String msg = "OUT OF MOVES!";
-            FontMetrics fm = g2d.getFontMetrics();
-            int x = (getWidth() - fm.stringWidth(msg)) / 2;
-            g2d.drawString(msg, x, getHeight() / 2);
+            FontMetrics fm;
+
+            // 1. Dòng chữ VICTORY hoặc GAME OVER
+            String titleMsg = board.isVictory ? "VICTORY!" : "OUT OF MOVES!";
+            g2d.setColor(board.isVictory ? new Color(255, 215, 0) : new Color(255, 100, 150)); // Thắng màu Vàng Gold,
+                                                                                               // Thua màu Đỏ Hồng
+            g2d.setFont(new Font("Arial", Font.BOLD, 90));
+            fm = g2d.getFontMetrics();
+            int titleX = (getWidth() - fm.stringWidth(titleMsg)) / 2;
+            g2d.drawString(titleMsg, titleX, getHeight() / 2 - 60);
+
+            // 2. Dòng chữ BEST SCORE
+            String scoreMsg = "Best Score: " + Board.bestScore + "  |  Your Score: " + board.score;
+            g2d.setColor(Color.WHITE);
+            g2d.setFont(new Font("Arial", Font.BOLD, 35));
+            fm = g2d.getFontMetrics();
+            int scoreX = (getWidth() - fm.stringWidth(scoreMsg)) / 2;
+            g2d.drawString(scoreMsg, scoreX, getHeight() / 2 + 20);
+
+            // 3. Dòng chữ Hướng dẫn Play Again nhấp nháy
+            String playMsg = "— Click anywhere to PLAY AGAIN —";
+            g2d.setColor(new Color(200, 200, 200));
+            g2d.setFont(new Font("Arial", Font.ITALIC, 25));
+            fm = g2d.getFontMetrics();
+            int playX = (getWidth() - fm.stringWidth(playMsg)) / 2;
+            g2d.drawString(playMsg, playX, getHeight() / 2 + 90);
         }
     }
 }
