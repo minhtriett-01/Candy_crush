@@ -23,8 +23,10 @@ public class Board {
 
     // score and moveleft
     public int score = 0;
-    public int movesLeft = 20; // Số lượt đi giới hạn
+    public int movesLeft = 20;
     public boolean isGameOver = false;
+    public boolean isVictory = false;
+    public static int bestScore = 0;
     private JLabel scoreLabel;
 
     public boolean inputLocked = false;
@@ -506,5 +508,23 @@ public class Board {
         swapC1 = -1;
         swapR2 = -1;
         swapC2 = -1;
+    }
+
+    // ==========================================
+    // HÀM RESET GAME KHI CHƠI LẠI
+    // ==========================================
+    public void resetGame() {
+        this.score = 0;
+        this.movesLeft = 20; // Trả lại 20 lượt
+        this.isGameOver = false;
+        this.isVictory = false;
+        this.inputLocked = false;
+        this.needsGravity = false;
+        resetLastSwap();
+
+        // Tạo lại mảng kẹo mới tinh
+        grid = new Candy[ROWS][COLS];
+        initializeBoard();
+        updateUI(); // Cập nhật lại bảng điểm UI bên trái
     }
 }
