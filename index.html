@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candy Crush</title>
+    <link rel="stylesheet" href="candy.css">
+</head>
+<body>
+
+<!-- Menu Screen -->
+<div id="menu">
+    <h1>🍬 Candy Crush</h1>
+    <p>Drag and swap candies — match 3 or more to score!</p>
+    <p id="menu-best" style="font-size:1.1rem;font-weight:700;color:#ffdd00;">Best: 0</p>
+    <button class="btn-play" onclick="menuPlay()">▶ Play Game</button>
+    <button class="btn-mute" id="mute-menu" onclick="toggleMusic()">🎵 Music: ON</button>
+</div>
+
+<!-- Game Screen -->
+<div id="topbar">
+    <h1>Score: <span id="score">0</span></h1>
+    <h1 style="font-size:1rem;opacity:.8;">Best: <span id="best">0</span></h1>
+    <button class="sm-btn" id="mute-game" onclick="toggleMusic()">🎵</button>
+    <button class="sm-btn" onclick="goMenu()">☰ Menu</button>
+</div>
+<div id="board"></div>
+
+<!-- candy.js handles everything — no img-data.js needed -->
+<script src="candy.js"></script>
+</body>
+</html>
